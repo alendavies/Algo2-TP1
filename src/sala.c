@@ -12,7 +12,6 @@
 
 struct objeto **crear_vector_objetos(FILE *archivo, int *tope)
 {
-
 	char linea[MAX_CARACTERES];
 	struct objeto **vector_objeto = NULL;
 	
@@ -69,25 +68,26 @@ struct interaccion **crear_vector_interaccion(FILE *archivo, int *tope)
 
 sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones)
 {
-	if(objetos == NULL || interacciones == NULL){
+	if(!objetos || !interacciones){
 		return NULL;
 	}	
-	sala_t *sala = malloc(sizeof(struct sala));
-	if(sala == NULL){
-		return NULL;
-	}
-	
 	FILE *arch_objetos = fopen(objetos, "r");
 	if(!arch_objetos){
-		free(sala);
         	return NULL;
 	}
 
 	FILE *arch_interacciones = fopen(interacciones, "r");
 	if(!arch_interacciones){
-		free(sala);
         	return NULL;
 	}
+
+	sala_t *sala = malloc(sizeof(struct sala));
+	if(sala == NULL){
+		fclose(arch_objetos);
+		fclose(arch_interacciones);
+		return NULL;
+	}
+	
 	int tope_objetos = 0;
 	struct objeto **vector_objeto = crear_vector_objetos(arch_objetos, &tope_objetos);
 	if(vector_objeto == NULL){
