@@ -67,10 +67,7 @@ struct interaccion **crear_vector_interaccion(FILE *archivo, int *tope)
 }
 
 sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones)
-{
-	if(!objetos || !interacciones){
-		return NULL;
-	}	
+{	
 	FILE *arch_objetos = fopen(objetos, "r");
 	if(!arch_objetos){
         	return NULL;
@@ -78,11 +75,12 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 
 	FILE *arch_interacciones = fopen(interacciones, "r");
 	if(!arch_interacciones){
+		fclose(arch_objetos);
         	return NULL;
 	}
 
 	sala_t *sala = malloc(sizeof(struct sala));
-	if(sala == NULL){
+	if(!sala){
 		fclose(arch_objetos);
 		fclose(arch_interacciones);
 		return NULL;
@@ -90,7 +88,7 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 	
 	int tope_objetos = 0;
 	struct objeto **vector_objeto = crear_vector_objetos(arch_objetos, &tope_objetos);
-	if(vector_objeto == NULL){
+	if(!vector_objeto){
 		fclose(arch_objetos);
 		fclose(arch_interacciones);
 		free(sala);
@@ -102,7 +100,7 @@ sala_t *sala_crear_desde_archivos(const char *objetos, const char *interacciones
 
 	int tope_interaccion = 0;
 	struct interaccion **vector_interaccion = crear_vector_interaccion(arch_interacciones, &tope_interaccion);
-	if(vector_interaccion == NULL){
+	if(!vector_interaccion){
 		fclose(arch_interacciones);
 		for(int i = 0; i < sala->cantidad_objetos; i++){
 			free(sala->objetos[i]);
